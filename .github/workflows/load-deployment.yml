@@ -56,5 +56,5 @@ jobs:
               "environment":"LOAD",
               "branch":"release",
               "status":"SUCCESS"
-            }
+             }
           ]'
