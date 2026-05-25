@@ -75,3 +75,22 @@ private class AccountControllerTest {
         );
     }
 }
+
+@isTest
+static void testAccountListNotEmpty() {
+
+    Test.startTest();
+
+    List<Account> result =
+        AccountController.getAccounts();
+
+    Test.stopTest();
+
+    for(Account acc : result) {
+
+        System.assertNotEquals(
+            null,
+            acc.Name
+        );
+    }
+}
