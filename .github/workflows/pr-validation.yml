@@ -1,4 +1,4 @@
-# Validation Pipeline has been updated
+# Validation Pipeline has been added
 name: Salesforce Validation Pipeline
 
 on:
