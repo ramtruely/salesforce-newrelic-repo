@@ -74,23 +74,23 @@ private class AccountControllerTest {
             exceptionThrown
         );
     }
-}
 
-@isTest
-static void testAccountListNotEmpty() {
+    @isTest
+    static void testAccountListNotEmpty() {
 
-    Test.startTest();
+        Test.startTest();
 
-    List<Account> result =
-        AccountController.getAccounts();
+        List<Account> result =
+            AccountController.getAccounts();
 
-    Test.stopTest();
+        Test.stopTest();
 
-    for(Account acc : result) {
+        for(Account acc : result) {
 
-        System.assertNotEquals(
-            null,
-            acc.Name
-        );
+            System.assertNotEquals(
+                null,
+                acc.Name
+            );
+        }
     }
 }
