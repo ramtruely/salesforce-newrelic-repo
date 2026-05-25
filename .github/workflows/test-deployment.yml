@@ -1,0 +1,77 @@
+name: TEST Deployment
+
+on:
+
+  push:
+    branches:
+      - develop
+
+jobs:
+
+  deploy-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install -g @salesforce/cli
+
+      - name: Authenticate TEST Org
+        run: |
+
+          echo "${{ secrets.SF_AUTH_TEST }}" > authFile.txt
+
+          sf org login sfdx-url \
+            --sfdx-url-file authFile.txt \
+            --alias test-org
+
+      - name: Deploy to TEST Org
+        run: |
+
+          sf project deploy start \
+            --target-org test-org \
+            --wait 30
+
+      - name: Send TEST Deployment Success Logs
+        if: success()
+        run: |
+
+          curl -X POST https://log-api.newrelic.com/log/v1 \
+          -H "Content-Type: application/json" \
+          -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
+          -d '[
+            {
+              "message":"TEST Deployment Successful",
+              "pipeline":"deployment",
+              "environment":"TEST",
+              "branch":"develop",
+              "status":"SUCCESS"
+            }
+          ]'
+
+      - name: Send TEST Deployment Failure Logs
+        if: failure()
+        run: |
+
+          curl -X POST https://log-api.newrelic.com/log/v1 \
+          -H "Content-Type: application/json" \
+          -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
+          -d '[
+            {
+              "message":"TEST Deployment Failed",
+              "pipeline":"deployment",
+              "environment":"TEST",
+              "branch":"develop",
+              "status":"FAILED"
+            }
+          ]'

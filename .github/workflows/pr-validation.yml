@@ -1,0 +1,82 @@
+name: PR Validation
+
+on:
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+
+  validate-apex:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install -g @salesforce/cli
+
+      - name: Authenticate TEST Org
+        run: |
+
+          echo "${{ secrets.SF_AUTH_TEST }}" > authFile.txt
+
+          sf org login sfdx-url \
+            --sfdx-url-file authFile.txt \
+            --alias test-org
+
+      - name: Validate Deployment
+        run: |
+
+         sf project deploy validate \
+         --metadata ApexClass:AccountController \
+         --metadata ApexClass:AccountControllerTest \
+         --metadata LightningComponentBundle:accountDashboard \
+         --target-org test-org \
+         --test-level RunSpecifiedTests \
+         --tests AccountControllerTest \
+         --wait 30
+
+      - name: Send Validation Success Logs
+        if: success()
+        run: |
+
+          curl -X POST https://log-api.newrelic.com/log/v1 \
+          -H "Content-Type: application/json" \
+          -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
+          -d '[
+            {
+              "message":"PR Validation Successful",
+              "pipeline":"validation",
+              "environment":"TEST",
+              "branch":"${{ github.head_ref }}",
+              "status":"SUCCESS"
+            }
+          ]'
+
+      - name: Send Validation Failure Logs
+        if: failure()
+        run: |
+
+          curl -X POST https://log-api.newrelic.com/log/v1 \
+          -H "Content-Type: application/json" \
+          -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
+          -d '[
+            {
+              "message":"PR Validation Failed",
+              "pipeline":"validation",
+              "environment":"TEST",
+              "branch":"${{ github.head_ref }}",
+              "status":"FAILED"
+          #  }
+          ]'

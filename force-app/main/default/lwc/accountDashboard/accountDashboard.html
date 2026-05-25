@@ -1,0 +1,26 @@
+<template>
+
+    <lightning-card title="Accounts">
+
+        <template if:true={accounts}>
+
+            <template
+                for:each={accounts}
+                for:item="acc">
+
+                <p key={acc.Id}>
+                    {acc.Name}
+                </p>
+
+            </template>
+
+        </template>
+
+        <lightning-button
+            label="Simulate Error"
+            onclick={handleError}>
+        </lightning-button>
+
+    </lightning-card>
+
+</template>
