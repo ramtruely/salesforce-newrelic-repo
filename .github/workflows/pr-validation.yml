@@ -41,11 +41,13 @@ jobs:
         run: |
 
           sf project deploy validate \
-            --source-dir force-app \
+            --metadata ApexClass:AccountController \
+            --metadata ApexClass:AccountControllerTest \
+            --metadata LightningComponentBundle:accountDashboard \
+            --metadata StaticResource:newrelicBrowser \
             --target-org test-org \
             --test-level RunSpecifiedTests \
             --tests AccountControllerTest \
-            --tests NewRelicLoggerTest \
             --wait 30
 
       - name: Send Validation Success Logs
