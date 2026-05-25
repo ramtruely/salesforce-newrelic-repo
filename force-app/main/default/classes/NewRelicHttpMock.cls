@@ -2,8 +2,8 @@
 global class NewRelicHttpMock
 implements HttpCalloutMock {
 
-    global HTTPResponse respond(
-        HTTPRequest req
+    global HttpResponse respond(
+        HttpRequest req
     ) {
 
         HttpResponse res =

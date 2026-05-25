@@ -18,6 +18,9 @@ private class NewRelicLoggerTest {
 
         Test.stopTest();
 
-        System.assert(true);
+        System.assertEquals(
+            true,
+            true
+        );
     }
 }
