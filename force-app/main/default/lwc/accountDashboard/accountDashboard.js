@@ -1,70 +1,76 @@
-import { LightningElement, wire } from 'lwc';
-
-import getAccounts
-from '@salesforce/apex/AccountController.getAccounts';
-
-import simulateError
-from '@salesforce/apex/AccountController.simulateError';
-
-import { loadScript } from 'lightning/platformResourceLoader';
-
-import newRelicBrowser
-from '@salesforce/resourceUrl/newrelicBrowser';
+import { LightningElement } from 'lwc';
 
 export default class AccountDashboard extends LightningElement {
 
-    accounts;
-    error;
-
     connectedCallback() {
-
-        loadScript(this, newRelicBrowser)
-            .then(() => {
-
-                console.log(
-                    'New Relic Browser Agent Injected'
-                );
-
-            })
-            .catch(error => {
-
-                console.error(error);
-            });
+        this.loadNewRelic();
     }
 
-    @wire(getAccounts)
-    wiredAccounts({ error, data }) {
-
-        if (data) {
-
-            this.accounts = data;
+    loadNewRelic() {
+        if (window.NREUM) {
+            console.log('New Relic already loaded');
+            return;
         }
 
-        if (error) {
+        const script = document.createElement('script');
 
-            this.error = error;
+        script.src = 'https://js-agent.newrelic.com/nr-loader-spa-current.min.js';
 
-            console.error(error);
-        }
-    }
+        script.onload = () => {
 
-    handleError() {
+            window.NREUM = window.NREUM || {};
 
-        simulateError()
-            .then(result => {
+            window.NREUM.init = {
+                distributed_tracing: {
+                    enabled: true
+                },
+                privacy: {
+                    cookies_enabled: true
+                },
+                ajax: {
+                    deny_list: ['bam.nr-data.net']
+                }
+            };
 
-                console.log(result);
-            })
-            .catch(error => {
+            window.NREUM.loader_config = {
+                accountID: '8088972',
+                trustKey: '8088972',
+                agentID: '1431932730',
+                licenseKey: 'fe5d3bbf8948aac3f06c39d77d226e18ec94NRAL',
+                applicationID: '1431932730'
+            };
 
-                console.error(error);
-            });
+            window.NREUM.info = {
+                beacon: 'bam.nr-data.net',
+                errorBeacon: 'bam.nr-data.net',
+                licenseKey: 'fe5d3bbf8948aac3f06c39d77d226e18ec94NRAL',
+                applicationID: '1431932730',
+                sa: 1
+            };
+
+            console.log('New Relic Browser Agent Injected');
+        };
+
+        script.onerror = () => {
+            console.error('Failed to load New Relic');
+        };
+
+        document.head.appendChild(script);
     }
 
     triggerFrontendError() {
 
-        throw new Error(
-            'Salesforce Frontend Test Error'
-        );
+        console.log('Triggering frontend error');
+
+        try {
+            throw new Error('Salesforce LWC Frontend Test Error');
+        } catch (error) {
+
+            console.error(error);
+
+            if (window.newrelic) {
+                window.newrelic.noticeError(error);
+            }
+        }
     }
 }
