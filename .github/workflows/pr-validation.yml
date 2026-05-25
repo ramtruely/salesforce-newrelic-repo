@@ -1,4 +1,4 @@
-name: PR Validation
+name: Salesforce Validation Pipeline
 
 on:
 
@@ -24,7 +24,8 @@ jobs:
 
       - name: Install Salesforce CLI
         run: |
-          npm install -g @salesforce/cli
+
+          npm install --global @salesforce/cli
 
       - name: Authenticate TEST Org
         run: |
@@ -38,45 +39,85 @@ jobs:
       - name: Validate Deployment
         run: |
 
-         sf project deploy validate \
-         --metadata ApexClass:AccountController \
-         --metadata ApexClass:AccountControllerTest \
-         --metadata LightningComponentBundle:accountDashboard \
-         --target-org test-org \
-         --test-level RunSpecifiedTests \
-         --tests AccountControllerTest \
-         --wait 30
+          sf project deploy validate \
+            --metadata ApexClass:AccountController \
+            --metadata ApexClass:AccountControllerTest \
+            --metadata LightningComponentBundle:accountDashboard \
+            --target-org test-org \
+            --test-level RunSpecifiedTests \
+            --tests AccountControllerTest \
+            --wait 30
 
       - name: Send Validation Success Logs
         if: success()
         run: |
 
+          CURRENT_TIME=$(date +%s000)
+
           curl -X POST https://log-api.newrelic.com/log/v1 \
           -H "Content-Type: application/json" \
           -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
-          -d '[
+          -d "[
             {
-              "message":"PR Validation Successful",
-              "pipeline":"validation",
-              "environment":"TEST",
-              "branch":"${{ github.head_ref }}",
-              "status":"SUCCESS"
+              \"common\": {
+                \"attributes\": {
+                  \"service.name\": \"salesforce-ci\",
+                  \"entity.name\": \"github-actions-validation\",
+                  \"entity.type\": \"ci-pipeline\",
+                  \"team\": \"salesforce-devops\",
+                  \"pipeline\": \"validation\",
+                  \"environment\": \"TEST\",
+                  \"workflow\": \"${{ github.workflow }}\"
+                }
+              },
+              \"logs\": [
+                {
+                  \"timestamp\": $CURRENT_TIME,
+                  \"message\": \"PR Validation Successful\",
+                  \"attributes\": {
+                    \"branch\": \"${{ github.head_ref }}\",
+                    \"repository\": \"${{ github.repository }}\",
+                    \"actor\": \"${{ github.actor }}\",
+                    \"status\": \"SUCCESS\"
+                  }
+                }
+              ]
             }
-          ]'
+          ]"
 
       - name: Send Validation Failure Logs
         if: failure()
         run: |
 
+          CURRENT_TIME=$(date +%s000)
+
           curl -X POST https://log-api.newrelic.com/log/v1 \
           -H "Content-Type: application/json" \
           -H "Api-Key:${{ secrets.NEW_RELIC_API_KEY }}" \
-          -d '[
+          -d "[
             {
-              "message":"PR Validation Failed",
-              "pipeline":"validation",
-              "environment":"TEST",
-              "branch":"${{ github.head_ref }}",
-              "status":"FAILED"
-          #  }
-          ]'
+              \"common\": {
+                \"attributes\": {
+                  \"service.name\": \"salesforce-ci\",
+                  \"entity.name\": \"github-actions-validation\",
+                  \"entity.type\": \"ci-pipeline\",
+                  \"team\": \"salesforce-devops\",
+                  \"pipeline\": \"validation\",
+                  \"environment\": \"TEST\",
+                  \"workflow\": \"${{ github.workflow }}\"
+                }
+              },
+              \"logs\": [
+                {
+                  \"timestamp\": $CURRENT_TIME,
+                  \"message\": \"PR Validation Failed\",
+                  \"attributes\": {
+                    \"branch\": \"${{ github.head_ref }}\",
+                    \"repository\": \"${{ github.repository }}\",
+                    \"actor\": \"${{ github.actor }}\",
+                    \"status\": \"FAILED\"
+                  }
+                }
+              ]
+            }
+          ]"
