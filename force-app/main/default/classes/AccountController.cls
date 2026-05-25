@@ -13,10 +13,13 @@ public with sharing class AccountController {
 
         } catch(Exception e) {
 
-            NewRelicLogger.sendLog(
-                e.getMessage(),
-                'ERROR'
-            );
+            if(!Test.isRunningTest()) {
+
+                NewRelicLogger.sendLog(
+                    e.getMessage(),
+                    'ERROR'
+                );
+            }
 
             throw new AuraHandledException(
                 e.getMessage()
@@ -38,10 +41,13 @@ public with sharing class AccountController {
 
         } catch(Exception e) {
 
-            NewRelicLogger.sendLog(
-                e.getMessage(),
-                'CRITICAL'
-            );
+            if(!Test.isRunningTest()) {
+
+                NewRelicLogger.sendLog(
+                    e.getMessage(),
+                    'CRITICAL'
+                );
+            }
 
             throw new AuraHandledException(
                 e.getMessage()

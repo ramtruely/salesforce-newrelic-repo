@@ -57,3 +57,18 @@ private class AccountControllerTest {
         );
     }
 }
+@isTest
+static void testGetAccountsAgain() {
+
+    Test.startTest();
+
+    List<Account> accounts =
+        AccountController.getAccounts();
+
+    Test.stopTest();
+
+    System.assertNotEquals(
+        null,
+        accounts
+    );
+}
