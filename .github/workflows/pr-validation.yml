@@ -39,9 +39,7 @@ jobs:
         run: |
 
           sf project deploy validate \
-          --metadata ApexClass:AccountController \
-          --metadata ApexClass:AccountControllerTest \
-          --metadata LightningComponentBundle:accountDashboard \
+          --source-dir force-app \
           --target-org test-org \
           --test-level RunSpecifiedTests \
           --tests AccountControllerTest \

@@ -6,6 +6,10 @@ public class NewRelicLogger {
         String level
     ) {
 
+        if(Test.isRunningTest()) {
+            return;
+        }
+
         Http http = new Http();
 
         HttpRequest req =
