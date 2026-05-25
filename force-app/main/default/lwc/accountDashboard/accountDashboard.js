@@ -6,7 +6,8 @@ from '@salesforce/apex/AccountController.getAccounts';
 import simulateError
 from '@salesforce/apex/AccountController.simulateError';
 
-import { loadScript } from 'lightning/platformResourceLoader';
+import { loadScript }
+from 'lightning/platformResourceLoader';
 
 import newRelicAgent
 from '@salesforce/resourceUrl/newrelicBrowser';
@@ -17,15 +18,34 @@ extends LightningElement {
     accounts;
     error;
 
+    connectedCallback() {
+
+        loadScript(this, newRelicAgent)
+            .then(() => {
+
+                console.log(
+                    'New Relic Browser Loaded'
+                );
+
+            })
+            .catch(error => {
+
+                console.error(error);
+            });
+    }
+
     @wire(getAccounts)
     wiredAccounts({ error, data }) {
 
         if(data) {
+
             this.accounts = data;
         }
 
         if(error) {
+
             this.error = error;
+
             console.error(error);
         }
     }
@@ -34,33 +54,20 @@ extends LightningElement {
 
         simulateError()
         .then(result => {
+
             console.log(result);
+
         })
         .catch(error => {
+
             console.error(error);
         });
     }
-}
 
-connectedCallback() {
+    triggerFrontendError() {
 
-    loadScript(this, newRelicAgent)
-        .then(() => {
+        let x = undefined;
 
-            console.log(
-                'New Relic Browser Loaded'
-            );
-
-        })
-        .catch(error => {
-
-            console.error(error);
-        });
-}
-
-triggerFrontendError() {
-
-    let x = undefined;
-
-    console.log(x.name.test);
+        console.log(x.name.test);
+    }
 }
