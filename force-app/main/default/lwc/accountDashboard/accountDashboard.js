@@ -66,8 +66,8 @@ extends LightningElement {
 
     triggerFrontendError() {
 
-        let x = undefined;
-
-        console.log(x.name.test);
-    }
+        throw new Error(
+             'New Relic Frontend Test Error'
+    );
+  }
 }
