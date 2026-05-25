@@ -6,12 +6,31 @@ from '@salesforce/apex/AccountController.getAccounts';
 import simulateError
 from '@salesforce/apex/AccountController.simulateError';
 
-export default class AccountDashboard
-extends LightningElement {
+import { loadScript } from 'lightning/platformResourceLoader';
+
+import newRelicBrowser
+from '@salesforce/resourceUrl/newrelicBrowser';
+
+export default class AccountDashboard extends LightningElement {
 
     accounts;
     error;
-    newRelicLoaded = false;
+
+    connectedCallback() {
+
+        loadScript(this, newRelicBrowser)
+            .then(() => {
+
+                console.log(
+                    'New Relic Browser Agent Injected'
+                );
+
+            })
+            .catch(error => {
+
+                console.error(error);
+            });
+    }
 
     @wire(getAccounts)
     wiredAccounts({ error, data }) {
@@ -27,29 +46,6 @@ extends LightningElement {
 
             console.error(error);
         }
-    }
-
-    renderedCallback() {
-
-        if (this.newRelicLoaded) {
-
-            return;
-        }
-
-        this.newRelicLoaded = true;
-
-        const script = document.createElement('script');
-
-        script.src =
-            'https://js-agent.newrelic.com/nr-loader-spa-current.min.js';
-
-        script.async = true;
-
-        document.head.appendChild(script);
-
-        console.log(
-            'New Relic Browser Agent Injected'
-        );
     }
 
     handleError() {
@@ -68,7 +64,7 @@ extends LightningElement {
     triggerFrontendError() {
 
         throw new Error(
-            'Frontend Crash Test'
+            'Salesforce Frontend Test Error'
         );
     }
 }
