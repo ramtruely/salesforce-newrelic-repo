@@ -78,5 +78,5 @@ jobs:
               "environment":"TEST",
               "branch":"${{ github.head_ref }}",
               "status":"FAILED"
-          #  }
-          ]'
+             }
+          #]'
