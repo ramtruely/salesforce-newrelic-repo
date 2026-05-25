@@ -44,6 +44,7 @@ jobs:
             --metadata ApexClass:AccountController \
             --metadata ApexClass:AccountControllerTest \
             --metadata LightningComponentBundle:accountDashboard \
+            --metadata StaticResource:newrelicBrowser \
             --target-org test-org \
             --test-level RunSpecifiedTests \
             --tests InvalidTestClass \
