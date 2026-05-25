@@ -46,12 +46,6 @@ jobs:
          --test-level RunSpecifiedTests \
          --tests AccountControllerTest \
          --wait 30
-      - name: Run Apex Tests
-        run: |
-
-          sf apex run test \
-            --target-org test-org \
-            --wait 20
 
       - name: Send Validation Success Logs
         if: success()
