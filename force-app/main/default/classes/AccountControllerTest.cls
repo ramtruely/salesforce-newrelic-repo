@@ -36,6 +36,8 @@ private class AccountControllerTest {
     @isTest
     static void testSimulateError() {
 
+        Boolean exceptionThrown = false;
+
         Test.startTest();
 
         try {
@@ -44,13 +46,14 @@ private class AccountControllerTest {
 
         } catch(Exception e) {
 
-            System.assert(
-                e.getMessage().contains('Divide')
-                ||
-                e.getMessage().contains('zero')
-            );
+            exceptionThrown = true;
         }
 
         Test.stopTest();
+
+        System.assertEquals(
+            true,
+            exceptionThrown
+        );
     }
 }

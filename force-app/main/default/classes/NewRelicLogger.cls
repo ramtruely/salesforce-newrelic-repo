@@ -8,7 +8,8 @@ public class NewRelicLogger {
 
         Http http = new Http();
 
-        HttpRequest req = new HttpRequest();
+        HttpRequest req =
+            new HttpRequest();
 
         req.setEndpoint(
             'https://log-api.newrelic.com/log/v1'
