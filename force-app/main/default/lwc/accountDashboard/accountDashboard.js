@@ -66,8 +66,6 @@ extends LightningElement {
 
     triggerFrontendError() {
 
-       const obj = null;
-
-       console.log(obj.name);
+       throw new Error('Frontend Crash Test');
   }
 }
