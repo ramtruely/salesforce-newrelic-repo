@@ -45,7 +45,7 @@ jobs:
             --metadata LightningComponentBundle:accountDashboard \
             --target-org test-org \
             --test-level RunSpecifiedTests \
-            --tests AccountControllerTest \
+            --tests InvalidTestClass \
             --wait 30
 
       - name: Send Validation Success Logs
