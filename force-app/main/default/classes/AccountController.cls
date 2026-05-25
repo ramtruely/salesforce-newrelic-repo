@@ -1,55 +1,51 @@
-@isTest
-private class AccountControllerTest {
+public with sharing class AccountController {
 
-    @testSetup
-    static void setupData() {
-
-        List<Account> accounts = new List<Account>();
-
-        for(Integer i=0; i<5; i++) {
-
-            accounts.add(
-                new Account(
-                    Name = 'Test Account ' + i,
-                    Industry = 'IT'
-                )
-            );
-        }
-
-        insert accounts;
-    }
-
-    @isTest
-    static void testGetAccounts() {
-
-        Test.startTest();
-
-        List<Account> result =
-            AccountController.getAccounts();
-
-        Test.stopTest();
-
-        System.assert(result.size() > 0);
-    }
-
-    @isTest
-    static void testSimulateError() {
-
-        Test.startTest();
+    @AuraEnabled(cacheable=true)
+    public static List<Account> getAccounts() {
 
         try {
 
-            AccountController.simulateError();
+            return [
+                SELECT Id, Name, Industry
+                FROM Account
+                LIMIT 10
+            ];
 
         } catch(Exception e) {
 
-            System.assert(
-                e.getMessage().contains('Divide')
-                ||
-                e.getMessage().contains('zero')
+            NewRelicLogger.sendLog(
+                e.getMessage(),
+                'ERROR'
+            );
+
+            throw new AuraHandledException(
+                e.getMessage()
             );
         }
+    }
 
-        Test.stopTest();
+    @AuraEnabled
+    public static String simulateError() {
+
+        try {
+
+            Integer x = 10;
+            Integer y = 0;
+
+            Integer z = x / y;
+
+            return 'Done';
+
+        } catch(Exception e) {
+
+            NewRelicLogger.sendLog(
+                e.getMessage(),
+                'CRITICAL'
+            );
+
+            throw new AuraHandledException(
+                e.getMessage()
+            );
+        }
     }
 }
