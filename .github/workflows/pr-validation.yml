@@ -44,7 +44,7 @@ jobs:
             --source-dir force-app \
             --target-org test-org \
             --test-level RunSpecifiedTests \
-            --tests InvalidTestClass \
+            --tests AccountControllerTest,NewRelicLoggerTest \
             --wait 30
 
       - name: Send Validation Success Logs

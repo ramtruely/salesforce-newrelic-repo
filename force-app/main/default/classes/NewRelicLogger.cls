@@ -6,10 +6,6 @@ public class NewRelicLogger {
         String level
     ) {
 
-        if(Test.isRunningTest()) {
-            return;
-        }
-
         Http http = new Http();
 
         HttpRequest req =
@@ -28,7 +24,7 @@ public class NewRelicLogger {
 
         req.setHeader(
             'Api-Key',
-            'YOUR_NEWRELIC_LICENSE_KEY'
+            'DUMMY_KEY'
         );
 
         String requestBody =
