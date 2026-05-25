@@ -30,10 +30,10 @@ jobs:
       - name: Authenticate TEST Org
         run: |
 
-          echo "${{ secrets.SF_AUTH_TEST }}" > authFile.json
+          echo "${{ secrets.SF_AUTH_TEST }}" > authFile.txt
 
           sf org login sfdx-url \
-            --sfdx-url-file authFile.json \
+            --sfdx-url-file authFile.txt \
             --alias test-org
 
       - name: Validate Deployment
