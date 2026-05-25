@@ -7,7 +7,7 @@ private class AccountControllerTest {
         List<Account> accounts =
             new List<Account>();
 
-        for(Integer i=0; i<5; i++) {
+        for(Integer i = 0; i < 5; i++) {
 
             accounts.add(
                 new Account(
@@ -30,7 +30,25 @@ private class AccountControllerTest {
 
         Test.stopTest();
 
-        System.assert(result.size() > 0);
+        System.assert(
+            result.size() > 0
+        );
+    }
+
+    @isTest
+    static void testGetAccountsAgain() {
+
+        Test.startTest();
+
+        List<Account> accounts =
+            AccountController.getAccounts();
+
+        Test.stopTest();
+
+        System.assertNotEquals(
+            null,
+            accounts
+        );
     }
 
     @isTest
@@ -56,19 +74,4 @@ private class AccountControllerTest {
             exceptionThrown
         );
     }
-}
-@isTest
-static void testGetAccountsAgain() {
-
-    Test.startTest();
-
-    List<Account> accounts =
-        AccountController.getAccounts();
-
-    Test.stopTest();
-
-    System.assertNotEquals(
-        null,
-        accounts
-    );
 }
