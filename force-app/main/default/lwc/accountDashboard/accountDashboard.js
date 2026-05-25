@@ -66,8 +66,8 @@ extends LightningElement {
 
     triggerFrontendError() {
 
-        throw new Error(
-             'New Relic Frontend Test Error'
-    );
+       const obj = null;
+
+       console.log(obj.name);
   }
 }
