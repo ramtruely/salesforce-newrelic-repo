@@ -41,7 +41,8 @@ jobs:
           sf project deploy validate \
           --source-dir force-app \
           --target-org test-org \
-          --tests RunSpecifiedTests \
+          --test-level RunSpecifiedTests \
+          --tests AccountControllerTest \
           --wait 30
 
       - name: Run Apex Tests
