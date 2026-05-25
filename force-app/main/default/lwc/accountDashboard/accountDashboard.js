@@ -6,43 +6,22 @@ from '@salesforce/apex/AccountController.getAccounts';
 import simulateError
 from '@salesforce/apex/AccountController.simulateError';
 
-import { loadScript }
-from 'lightning/platformResourceLoader';
-
-import newRelicAgent
-from '@salesforce/resourceUrl/newrelicBrowser';
-
 export default class AccountDashboard
 extends LightningElement {
 
     accounts;
     error;
-
-    connectedCallback() {
-
-        loadScript(this, newRelicAgent)
-            .then(() => {
-
-                console.log(
-                    'New Relic Browser Loaded'
-                );
-
-            })
-            .catch(error => {
-
-                console.error(error);
-            });
-    }
+    newRelicLoaded = false;
 
     @wire(getAccounts)
     wiredAccounts({ error, data }) {
 
-        if(data) {
+        if (data) {
 
             this.accounts = data;
         }
 
-        if(error) {
+        if (error) {
 
             this.error = error;
 
@@ -50,22 +29,46 @@ extends LightningElement {
         }
     }
 
+    renderedCallback() {
+
+        if (this.newRelicLoaded) {
+
+            return;
+        }
+
+        this.newRelicLoaded = true;
+
+        const script = document.createElement('script');
+
+        script.src =
+            'https://js-agent.newrelic.com/nr-loader-spa-current.min.js';
+
+        script.async = true;
+
+        document.head.appendChild(script);
+
+        console.log(
+            'New Relic Browser Agent Injected'
+        );
+    }
+
     handleError() {
 
         simulateError()
-        .then(result => {
+            .then(result => {
 
-            console.log(result);
+                console.log(result);
+            })
+            .catch(error => {
 
-        })
-        .catch(error => {
-
-            console.error(error);
-        });
+                console.error(error);
+            });
     }
 
     triggerFrontendError() {
 
-       throw new Error('Frontend Crash Test');
-  }
+        throw new Error(
+            'Frontend Crash Test'
+        );
+    }
 }
