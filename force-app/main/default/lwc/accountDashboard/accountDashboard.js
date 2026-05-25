@@ -6,6 +6,11 @@ from '@salesforce/apex/AccountController.getAccounts';
 import simulateError
 from '@salesforce/apex/AccountController.simulateError';
 
+import { loadScript } from 'lightning/platformResourceLoader';
+
+import newRelicAgent
+from '@salesforce/resourceUrl/newrelicBrowser';
+
 export default class AccountDashboard
 extends LightningElement {
 
@@ -35,4 +40,27 @@ extends LightningElement {
             console.error(error);
         });
     }
+}
+
+connectedCallback() {
+
+    loadScript(this, newRelicAgent)
+        .then(() => {
+
+            console.log(
+                'New Relic Browser Loaded'
+            );
+
+        })
+        .catch(error => {
+
+            console.error(error);
+        });
+}
+
+triggerFrontendError() {
+
+    let x = undefined;
+
+    console.log(x.name.test);
 }
